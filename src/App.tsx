@@ -1,30 +1,36 @@
-import React from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Home from './pages/testRouter/Home';
-import News from './pages/testRouter/News';
-import Contact from './pages/testRouter/Contact';
+import { publicRoutes } from './routes';
+import DefaultLayout from './components/Layout/DefaultLayout';
+import { IRouteType } from './components/Types';
 
 function App() {
   return (
     <div className="App">
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">home</Link>
-          </li>
-          <li>
-            <Link to="/news">news</Link>
-          </li>
-          <li>
-            <Link to="/contacts">contacts</Link>
-          </li>
-        </ul>
-      </nav>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/contacts" element={<Contact />} />
+        {publicRoutes.map((route: IRouteType, index) => {
+          const Page = route.component;
+          let Layout = DefaultLayout;
+
+          if (route?.layout) {
+            Layout = route?.layout;
+          } else if (route?.layout === null) {
+            Layout = Fragment as any;
+          }
+
+          return (
+            <Route
+              key={index}
+              path={route.path}
+              element={
+                <Layout>
+                  <Page />
+                </Layout>
+              }
+            />
+          );
+        })}
       </Routes>
     </div>
   );
